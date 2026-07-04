@@ -12,12 +12,19 @@ import {
 } from "lucide-react";
 import { Message } from "../types";
 
+import { fallbackHospital, fallbackDepartments, fallbackDoctors, fallbackFAQs } from "../mockData";
+
 interface ChatbotViewProps {
   initialQuestion?: string;
   clearInitialQuestion?: () => void;
+  isOffline?: boolean;
 }
 
-export default function ChatbotView({ initialQuestion = "", clearInitialQuestion }: ChatbotViewProps) {
+export default function ChatbotView({ 
+  initialQuestion = "", 
+  clearInitialQuestion, 
+  isOffline = false 
+}: ChatbotViewProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -28,6 +35,81 @@ export default function ChatbotView({ initialQuestion = "", clearInitialQuestion
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const getLocalOfflineResponse = (query: string): string => {
+    const q = query.toLowerCase();
+
+    // 1. Check direct FAQ matches
+    for (const faq of fallbackFAQs) {
+      if (q.includes(faq.question.toLowerCase()) || faq.question.toLowerCase().includes(q)) {
+        return faq.answer;
+      }
+    }
+
+    // 2. Check general FAQs keywords
+    if (q.includes("visiting") || q.includes("hour") || q.includes("timing") || q.includes("when can i")) {
+      return `Visiting hours are ${fallbackHospital.visitingHours}. Out-patient consultations are available Monday through Saturday, from 9:00 AM to 5:00 PM.`;
+    }
+
+    if (q.includes("emergency") || q.includes("trauma") || q.includes("critical") || q.includes("911")) {
+      return `Yes, our Emergency Department is open 24/7 on the Ground Floor. For urgent trauma, please call our emergency line directly: ${fallbackHospital.emergencyPhone}`;
+    }
+
+    if (q.includes("insurance") || q.includes("policy") || q.includes("pay") || q.includes("cashless")) {
+      return `We accept the following major insurance providers: ${fallbackHospital.acceptedInsurances.join(", ")}. Please present your insurance card at the reception counter during check-in.`;
+    }
+
+    if (q.includes("appointment") || q.includes("book") || q.includes("reserve") || q.includes("schedule")) {
+      return `You can easily book an appointment online! Just navigate to the "Home" tab on our website, scroll down to the "Appointment Reservation" form, and fill in your desired practitioner, timeslot, and contact coordinates.`;
+    }
+
+    // 3. Check doctor mentions
+    for (const doc of fallbackDoctors) {
+      const lastName = doc.name.split(" ").pop()?.toLowerCase() || "";
+      if (q.includes(lastName) || q.includes(doc.name.toLowerCase())) {
+        return `${doc.name} specializes in the ${doc.department} department. They have ${doc.experience} years of clinical experience and hold qualifications: ${doc.qualification}. Available days: ${doc.availableDays.join(", ")}. Consultation fee is $${doc.consultationFee}.`;
+      }
+    }
+
+    if (q.includes("doctor") || q.includes("physician") || q.includes("specialist") || q.includes("practitioner")) {
+      const docList = fallbackDoctors.map(d => `${d.name} (${d.department})`).join(", ");
+      return `Our highly experienced medical staff includes: ${docList}. You can ask me details about any specific doctor by entering their name!`;
+    }
+
+    // 4. Check department mentions
+    for (const dept of fallbackDepartments) {
+      if (q.includes(dept.name.toLowerCase()) || q.includes(dept.id.toLowerCase())) {
+        return `The ${dept.name} department is located on Floor ${dept.floorNumber}. ${dept.description} Associated specialist staff: ${dept.doctors.join(", ")}.`;
+      }
+    }
+
+    if (q.includes("department") || q.includes("specialty") || q.includes("floor") || q.includes("where is")) {
+      const depts = fallbackDepartments.map(d => `${d.name} (Floor ${d.floorNumber})`).join(", ");
+      return `St. Jude hospital departments include: ${depts}. Please ask me about a specific department for detail and floor maps.`;
+    }
+
+    if (q.includes("fee") || q.includes("cost") || q.includes("charge")) {
+      return `Consultation fees vary between $100 and $250 depending on the specialist. For example, Dr. Ravi Kumar's fee is $130, while Dr. House's emergency consultation is $250. Select the "Doctors" tab to see full pricing details.`;
+    }
+
+    if (q.includes("monday") || q.includes("tuesday") || q.includes("wednesday") || q.includes("thursday") || q.includes("friday") || q.includes("saturday")) {
+      const day = q.match(/monday|tuesday|wednesday|thursday|friday|saturday/)?.[0];
+      if (day) {
+        const capitalizedDay = day.charAt(0).toUpperCase() + day.slice(1);
+        const docsOnDay = fallbackDoctors.filter(d => d.availableDays.some(ad => ad.toLowerCase() === day.toLowerCase())).map(d => d.name);
+        return `On ${capitalizedDay}s, the following medical experts are on-duty and available for reservations: ${docsOnDay.join(", ")}.`;
+      }
+    }
+
+    // Default polite grounded response
+    return `I am currently operating in Offline Backup Mode using local hospital files. I can answer questions about:
+- Clinical Departments (Cardiology, Neurology, Pediatrics, etc.)
+- Doctor Specialties & Fees (Dr. House, Dr. Connor, etc.)
+- Visiting Hours & 24/7 Emergency support
+- Insurance compatibility and Appointment booking.
+
+Please specify your inquiry and I will fetch it from our local offline database!`;
+  };
 
   const suggestedQuestions = [
     "What are the visiting hours?",
@@ -68,8 +150,23 @@ export default function ChatbotView({ initialQuestion = "", clearInitialQuestion
     setInput("");
     setLoading(true);
 
+    if (isOffline) {
+      // Simulate typing latency for offline mode
+      setTimeout(() => {
+        const replyText = getLocalOfflineResponse(trimmed);
+        const assistantMsg: Message = {
+          role: "assistant",
+          content: replyText,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages(prev => [...prev, assistantMsg]);
+        setLoading(false);
+      }, 500);
+      return;
+    }
+
     try {
-      // Gather current message history for context (excluding initial system messages if desired, or mapping cleanly)
+      // Gather current message history for context
       const mappedHistory = messages.map(m => ({
         role: m.role,
         content: m.content
@@ -84,6 +181,11 @@ export default function ChatbotView({ initialQuestion = "", clearInitialQuestion
         })
       });
 
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("API returned non-JSON response.");
+      }
+
       const data = await response.json();
       
       const assistantMsg: Message = {
@@ -94,13 +196,15 @@ export default function ChatbotView({ initialQuestion = "", clearInitialQuestion
 
       setMessages(prev => [...prev, assistantMsg]);
     } catch (err) {
-      console.error(err);
-      const errorMsg: Message = {
+      console.warn("AI Chat request failed. Falling back to local offline knowledge engine:", err);
+      // Seamlessly fall back to local rule-based database matching rather than showing error
+      const replyText = getLocalOfflineResponse(trimmed);
+      const assistantMsg: Message = {
         role: "assistant",
-        content: "Sorry, I couldn't establish a secure connection to our databases. Please try again later.",
+        content: `⚠️ [Offline Mode Backup] ${replyText}`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-      setMessages(prev => [...prev, errorMsg]);
+      setMessages(prev => [...prev, assistantMsg]);
     } finally {
       setLoading(false);
     }

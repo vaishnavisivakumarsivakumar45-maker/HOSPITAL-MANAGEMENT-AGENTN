@@ -8,9 +8,10 @@ interface HomeViewProps {
   departments: Department[];
   hospitalPhone: string;
   emergencyPhone: string;
+  isOffline?: boolean;
 }
 
-export default function HomeView({ onAskAI, doctors, departments, hospitalPhone, emergencyPhone }: HomeViewProps) {
+export default function HomeView({ onAskAI, doctors, departments, hospitalPhone, emergencyPhone, isOffline = false }: HomeViewProps) {
   const [patientName, setPatientName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedDept, setSelectedDept] = useState("");
@@ -44,6 +45,32 @@ export default function HomeView({ onAskAI, doctors, departments, hospitalPhone,
     setBookingError("");
     setIsBooking(true);
 
+    if (isOffline) {
+      // Simulate local/offline database reservation save
+      setTimeout(() => {
+        const mockAppointment = {
+          id: "APT-LOCAL-" + Math.floor(1000 + Math.random() * 9000),
+          patientName,
+          phone,
+          doctorName: selectedDoctor,
+          department: selectedDept || doctors.find(d => d.name === selectedDoctor)?.department || "General",
+          date: appointmentDate,
+          timeslot: timeSlot,
+          reason,
+          createdAt: new Date().toISOString()
+        };
+        setBookingSuccess(mockAppointment);
+        setPatientName("");
+        setPhone("");
+        setSelectedDept("");
+        setSelectedDoctor("");
+        setAppointmentDate("");
+        setReason("");
+        setIsBooking(false);
+      }, 600);
+      return;
+    }
+
     try {
       const response = await fetch("/api/appointment", {
         method: "POST",
@@ -59,6 +86,11 @@ export default function HomeView({ onAskAI, doctors, departments, hospitalPhone,
         })
       });
 
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("Response was not in JSON format.");
+      }
+
       const data = await response.json();
       if (response.ok) {
         setBookingSuccess(data.appointment);
@@ -73,8 +105,9 @@ export default function HomeView({ onAskAI, doctors, departments, hospitalPhone,
         setBookingError(data.error || "Failed to book appointment. Please try again.");
       }
     } catch (err) {
-      console.error(err);
-      setBookingError("Unable to connect to server. Please try again later.");
+      console.error("Booking failed due to connection error. Offering offline booking option:", err);
+      // Fallback: allow them to book offline instantly
+      setBookingError("Connection dropped. Please retry, or click 'Book Offline' to store locally.");
     } finally {
       setIsBooking(false);
     }
