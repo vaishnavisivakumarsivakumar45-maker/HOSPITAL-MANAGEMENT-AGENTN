@@ -1,0 +1,57 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.ts"
+    },
+    {
+      "src": "/hospital",
+      "dest": "api/index.ts"
+    },
+    {
+      "src": "/departments",
+      "dest": "api/index.ts"
+    },
+    {
+      "src": "/doctors",
+      "dest": "api/index.ts"
+    },
+    {
+      "src": "/faq",
+      "dest": "api/index.ts"
+    },
+    {
+      "src": "/appointment",
+      "dest": "api/index.ts"
+    },
+    {
+      "src": "/appointments",
+      "dest": "api/index.ts"
+    },
+    {
+      "src": "/chat",
+      "dest": "api/index.ts"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}

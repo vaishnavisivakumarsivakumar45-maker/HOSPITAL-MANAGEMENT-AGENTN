@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Real MongoDB Database Tier
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - hospital_network
+    restart: always
+
+  # Spring Boot Java REST Backend Service
+  java-backend:
+    build:
+      context: ./java-spring-boot-backend
+      dockerfile: Dockerfile
+    container_name: spring_boot_backend_container
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/hospital_agent_db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - mongodb
+    networks:
+      - hospital_network
+    restart: on-failure
+
+  # Interactive Web Interface Service (Express + Vite)
+  web-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node_web_container
+    ports:
+      - "3000:3000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    networks:
+      - hospital_network
+    restart: always
+
+volumes:
+  mongo_data:
+
+networks:
+  hospital_network:
+    driver: bridge

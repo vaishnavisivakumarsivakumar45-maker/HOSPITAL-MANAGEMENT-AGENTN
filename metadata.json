@@ -1,0 +1,6 @@
+{
+  "name": "Hospital Information Agent",
+  "description": "An intelligent hospital assistant chatbot using Google Gemini to answer questions about doctors, departments, and services safely.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
