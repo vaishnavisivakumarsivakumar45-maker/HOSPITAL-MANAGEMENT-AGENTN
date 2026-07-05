@@ -1,306 +1,273 @@
-# Hospital Information Agent
+# 🏥 Hospital Information AI Agent
 
-An intelligent, AI-powered Hospital Information Chatbot and management system built with **Spring Boot (Java)**, **Node.js/Express (Full-Stack Engine)**, **React & Tailwind CSS (High-Fidelity Interface)**, **MongoDB**, and **Google Gemini API**.
-
----
-
-## 📋 Table of Contents
-- [Project Introduction](#project-introduction)
-- [Problem Statement](#problem-statement)
-- [Objectives](#objectives)
-- [Technology Stack](#technology-stack)
-- [System Architecture](#system-architecture)
-- [Database Design](#database-design)
-- [API Documentation](#api-documentation)
-- [Prompt Engineering](#prompt-engineering)
-- [Screenshots & Visual Tour](#screenshots--visual-tour)
-- [Installation Steps](#installation-steps)
-- [Docker Deployment Commands](#docker-deployment-commands)
-- [Future Enhancements](#future-enhancements)
+An AI-powered Hospital Information Assistant that helps users get instant hospital-related information through a simple chat interface. The application uses Google's Gemini AI to answer user queries about doctors, departments, OP timings, appointments, emergency services, and hospital facilities.
 
 ---
 
-## 🚀 Project Introduction
-The **Hospital Information Agent** is a cutting-edge, patient-centered chatbot application designed to instantly answer hospital queries. It leverages state-of-the-art Generative AI via the **Google Gemini API** grounded on actual structured hospital records in **MongoDB**. 
+## 📌 Project Overview
 
-The system features a highly responsive, modern multi-page single view dashboard including interactive doctors directories, wayfinding map routing, clinical departments indexes, and a fully functional real-time medical appointment scheduler.
+The Hospital Information AI Agent is designed to improve the patient experience by providing quick and accurate responses to common hospital-related questions. Instead of waiting at the reception or searching through multiple web pages, users can simply ask questions in natural language and receive instant answers.
 
----
-
-## ⚠️ Problem Statement
-Patients and visitors navigating medical facilities frequently experience high administrative friction:
-1. **Navigational Fatigue:** Difficulty locating specific wards (e.g., Cardiology, Pediatrics) across multiple floors.
-2. **Scheduling Delays:** Long wait lines or phone hold times simply to check a doctor's availability days or consultation fees.
-3. **Information Fragmentation:** Scattered details regarding accepted health insurances, OP (Out-Patient) hours, and visiting rules.
-4. **General AI Hallucination & Clinical Safety Liability:** Generic AI models often fabricate administrative info or dangerously attempt to prescribe medication or diagnose patients.
+This project demonstrates how Large Language Models (LLMs) can be integrated into a web application to provide intelligent healthcare information assistance.
 
 ---
 
-## 🎯 Objectives
-- Provide **instant, 24/7 administrative assistance** regarding doctor availability, visiting hours, floor charts, and fees.
-- **Formulate strict AI Grounding Rules:** Restrict AI outputs strictly to verified MongoDB facts, preventing medical diagnosis, prescription advice, or off-topic conversation.
-- Create a **fully functional patient scheduler** that permits real-time appointment booking.
-- Architect a **unified docker-compose pipeline** packaging the Java REST service, Node.js proxy, and MongoDB service.
+## ❗ Problem Statement
+
+Many hospitals still depend on manual enquiry systems where patients must visit the reception or make phone calls to obtain basic information. This often leads to:
+
+- Long waiting times
+- Repeated enquiries
+- Increased workload for hospital staff
+- Limited enquiry hours
+- Poor user experience
+
+This project aims to solve these problems by providing a 24×7 AI-powered virtual assistant.
 
 ---
 
-## 🛠️ Technology Stack
-- **Backend Services:** 
-  - Spring Boot 3.x (Java 17) - Enterprise MVC Core
-  - Node.js 20 & Express - Server-Side Gemini API Proxy & Vite Asset Engine
-- **Frontend Core:** React 19, Tailwind CSS 4, Lucide Icons, and Motion.js (Animations)
-- **Database System:** MongoDB 6.0 (Durable JSON document collection)
-- **AI Core:** Google Gemini 3.5 Flash Model (`@google/genai` TypeScript SDK and Java `RestTemplate` mapping)
-- **Deployment & Containers:** Docker, Docker Compose
+## 💡 Proposed Solution
+
+The Hospital Information AI Agent allows users to:
+
+- Ask hospital-related questions in natural language
+- Get instant AI-generated responses
+- Access doctor and department information
+- Know OP timings
+- Learn appointment procedures
+- Find emergency services
+- View hospital facilities
 
 ---
 
-## 🏢 System Architecture
+## ✨ Features
+
+- 🤖 AI-powered chatbot
+- 🏥 Hospital information assistance
+- 👨‍⚕️ Doctor and department details
+- ⏰ OP timing information
+- 📅 Appointment guidance
+- 🚑 Emergency service information
+- 💬 Natural language conversation
+- ⚡ Fast response using Gemini AI
+- 📱 Responsive web interface
+
+---
+
+## 🛠 Technology Stack
+
+### Frontend
+- React.js
+- Vite
+- HTML5
+- CSS3
+- Tailwind CSS
+
+### Backend
+- Node.js
+- Express.js
+
+### AI
+- Google Gemini API
+- Google AI Studio
+
+### Version Control
+- Git
+- GitHub
+
+### Deployment
+- Docker (Optional)
+- AWS / Azure / Render / Railway (Future Deployment)
+
+---
+
+## 🏗 System Architecture
+
 ```
-[ Patient Client / React UI ]
-             │ (Port 3000)
-             ▼
-    [ Node/Express Proxy ] ───► [ Google Gemini LLM API ]
-             │
-             ▼ (Port 8080)
-   [ Spring Boot REST API ] ───► [ MongoDB (Port 27017) ]
-```
-
-The system follows a clean **MVC (Model-View-Controller) Architecture** for maximum separation of concerns:
-1. **Controller:** Maps inbound HTTP request paths (`/doctors`, `/chat`, `/appointment`) to service interfaces.
-2. **Service Layer:** Houses the business logic, triggers queries from MongoDB, and generates GenAI prompt templates.
-3. **Repository Layer:** Interacts with the MongoDB collections through standard repository abstractions (`MongoRepository`).
-4. **Model Tier:** Represents database document structures in Java (POJOs) and TypeScript.
-5. **DTO (Data Transfer Object):** Deserializes requests and serializes payloads securely.
-
----
-
-## 🗄️ Database Design
-
-### MongoDB Collections Schema
-
-#### 1. `hospital`
-Stores configuration metadata for the hospital facility.
-```json
-{
-  "_id": "ObjectId",
-  "name": "String",
-  "address": "String",
-  "phone": "String",
-  "emergencyPhone": "String",
-  "email": "String",
-  "visitingHours": "String",
-  "acceptedInsurances": ["String"],
-  "overview": "String",
-  "vision": "String",
-  "mission": "String"
-}
-```
-
-#### 2. `department`
-Tracks clinical floors, descriptions, and linked staff.
-```json
-{
-  "_id": "ObjectId",
-  "name": "String",
-  "description": "String",
-  "floorNumber": "Integer",
-  "doctors": ["String"]
-}
-```
-
-#### 3. `doctor`
-Physical doctor records with clinical rates and active day availability.
-```json
-{
-  "_id": "ObjectId",
-  "name": "String",
-  "department": "String",
-  "experience": "Integer",
-  "qualification": "String",
-  "availableDays": ["String"],
-  "consultationFee": "Double"
-}
-```
-
-#### 4. `faq`
-Standard frequently asked Q&A records.
-```json
-{
-  "_id": "ObjectId",
-  "question": "String",
-  "answer": "String"
-}
-```
-
-#### 5. `appointment`
-Tracks patient appointments booked in real-time.
-```json
-{
-  "_id": "ObjectId",
-  "patientName": "String",
-  "phone": "String",
-  "doctorName": "String",
-  "department": "String",
-  "date": "String",
-  "timeslot": "String",
-  "reason": "String",
-  "createdAt": "ISODate"
-}
+User
+   │
+   ▼
+React Frontend
+   │
+HTTP Request
+   │
+   ▼
+Node.js + Express Backend
+   │
+Prompt Engineering
+   │
+   ▼
+Google Gemini API
+   │
+AI Response
+   │
+   ▼
+Frontend
 ```
 
 ---
 
-## 🔌 API Documentation
+## 🔄 Workflow
 
-### 1. Hospital General Metadata
-* **Route:** `GET /hospital`
-* **Description:** Retrieves St. Jude primary information.
-* **Response Type:** `JSON (Hospital object)`
-
-### 2. Department Navigation Index
-* **Route:** `GET /departments`
-* **Description:** Lists floor plans, wayfinding details, and assigned specialists.
-* **Response Type:** `JSON (Array of Department)`
-
-### 3. Doctors staff directory
-* **Route:** `GET /doctors`
-* **Query Parameters:** `search` (Optional: Search by name, specialty, or credentials)
-* **Response Type:** `JSON (Array of Doctor)`
-
-### 4. Appointment Booking Registry
-* **Route:** `POST /appointment`
-* **Request Body:**
-  ```json
-  {
-    "patientName": "John Doe",
-    "phone": "+1 (555) 123-4567",
-    "doctorName": "Dr. Sarah Connor",
-    "department": "Cardiology",
-    "date": "2026-07-10",
-    "timeslot": "10:00 AM",
-    "reason": "Routine Cardiovascular Screening"
-  }
-  ```
-* **Response:** `201 Created` returning the saved `Appointment` with a generated ID.
-
-### 5. Grounded Chat Integration
-* **Route:** `POST /chat`
-* **Request Body:**
-  ```json
-  {
-    "message": "Where is the Cardiology department located?",
-    "history": [
-      { "role": "user", "content": "Hello" },
-      { "role": "assistant", "content": "Hello! I am your assistant." }
-    ]
-  }
-  ```
-* **Response:**
-  ```json
-  {
-    "reply": "The Cardiology department is located on the 1st Floor. Associated doctors include Dr. Sarah Connor and Dr. Ravi Kumar."
-  }
-  ```
+1. User opens the Hospital Information website.
+2. User enters a hospital-related question.
+3. React frontend sends the request to the backend.
+4. Backend creates a structured prompt.
+5. Gemini API processes the prompt.
+6. AI generates an appropriate response.
+7. Backend returns the response.
+8. Frontend displays the answer to the user.
 
 ---
 
 ## 🧠 Prompt Engineering
-To ensure total security and prevent clinical diagnostic liability, we employ advanced prompt templates:
 
-### System Instruction
+The application uses prompt engineering to improve response quality.
+
+Example prompt:
+
 ```
-You are an AI Hospital Information Assistant.
+You are a Hospital Information Assistant.
 
-Answer only using the hospital information provided in the SYSTEM HOSPITAL RECORDS CONTEXT block above.
+Answer only hospital-related questions.
 
-Never generate fake information.
+Provide clear, polite, and accurate responses.
 
-If information is unavailable, reply:
-"Sorry, I couldn't find that information in our hospital records."
+If the question is unrelated to hospitals,
+politely inform the user.
 
-If users ask for medical diagnosis or medicines, politely advise them to consult a doctor.
+User Question:
+What are the OP timings for Cardiology?
+```
 
-If users ask questions unrelated to hospital information, reply:
-"I am designed to answer hospital-related questions only."
+This helps the AI:
+- Stay focused
+- Produce consistent responses
+- Reduce irrelevant answers
+- Improve accuracy
 
-Keep answers short, professional, and easy to understand.
+---
+
+## 🚀 Installation
+
+### Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+```
+
+### Navigate to the project
+
+```bash
+cd YOUR_REPOSITORY
+```
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create a `.env` file.
+
+Example:
+
+```env
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 ```
 
 ---
 
-## 📸 Screenshots & Visual Tour
-1. **Home Panel:** Modern dark-theme banner introducing the facility. Includes a prompt launcher, emergency quick contacts, and an interactive reservation form.
-2. **About Page:** Showcases JCI credentials, clinical overview, and modular mission/vision cards.
-3. **Specialties Floor Wayfinder:** Displays Urology, Emergency, Neurology, etc., highlighting their floors and linking to medical personnel.
-4. **Searchable Registry:** Highly responsive input allowing instant keyword filtering on physicians.
-5. **AI Consultation Chat:** Features scroll mechanics, chat reset buttons, typing indicators, and quick-ask recommendation pills.
+### Start the development server
+
+```bash
+npm run dev
+```
 
 ---
 
-## 📦 Installation Steps
+## 📂 Project Structure
 
-### Prerequisites
-- Java JDK 17
-- Node.js v20+
-- MongoDB instance running on port 27017
-
-### Running the Full-Stack Node Application (Live Workspace)
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Configure `.env` with your Gemini API Key:
-   ```env
-   GEMINI_API_KEY="AIzaSyYourKey..."
-   ```
-3. Start the dev server:
-   ```bash
-   npm run dev
-   ```
-4. Access the web interface at `http://localhost:3000`.
-
-### Running the Java Spring Boot Backend
-1. Open the `/java-spring-boot-backend` directory.
-2. Build the project using Maven:
-   ```bash
-   mvn clean install
-   ```
-3. Run the Spring Boot app:
-   ```bash
-   mvn spring-boot:run
-   ```
+```
+Hospital-Information-Agent/
+│
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── server/
+│
+├── public/
+│
+├── package.json
+├── Dockerfile
+├── README.md
+└── .env
+```
 
 ---
 
-## 🐳 Docker Deployment Commands
+## 📸 Screenshots
 
-Deploy the entire suite instantly with a single command!
+Add screenshots here after running the project.
 
-### 1. Build and Compile with Docker Compose
-Ensure your environment variable `GEMINI_API_KEY` is exported on your host, then run:
-```bash
-docker-compose up --build -d
-```
+Example:
 
-### 2. Verify Running Containers
-Check the status of running containers:
-```bash
-docker ps
-```
-- Web Front-End: `http://localhost:3000`
-- Spring Boot Service: `http://localhost:8080`
-- MongoDB Database: `mongodb://localhost:27017`
-
-### 3. Stop Services
-```bash
-docker-compose down -v
-```
+- Home Page
+- Chat Interface
+- AI Response
+- About Page
 
 ---
 
 ## 🔮 Future Enhancements
-- **SMS Notifications:** Automate appointment confirmations and reminders via Twilio integration.
-- **Multilingual Support:** Localize the chatbot to translate hospital wayfinding guidelines into 12+ international languages using Gemini Live Translation APIs.
-- **Google Maps Navigation:** Integrate the Google Maps SDK to provide step-by-step transit guidance to our physical campus.
-- **Electronic Health Record (EHR) Sync:** Safely sync booked appointments to active clinical logs (e.g., HL7 FHIR standards compliance).
+
+- Voice Assistant
+- Multi-language Support
+- Online Appointment Booking
+- Patient Login
+- Doctor Availability Tracking
+- Hospital Database Integration
+- Medical Report Access
+- Emergency Ambulance Booking
+- Chat History
+- Mobile Application
+
+---
+
+## Advantages
+
+- Instant responses
+- Easy to use
+- Available 24×7
+- Reduces receptionist workload
+- Saves patient time
+- Improves patient experience
+- AI-powered intelligent conversation
+
+---
+
+## Limitations
+
+- Requires internet connection
+- Depends on Gemini API availability
+- Cannot diagnose diseases
+- Accuracy depends on available hospital information
+
+---
+
+## 👩‍💻 Author
+
+**Vaishnavi Sivakumar**
+
+- GitHub: https://github.com/VAISHNAVISIVAKUMAR050
+
+---
+
+## 📄 License
+
+This project is developed for educational and learning purposes.
