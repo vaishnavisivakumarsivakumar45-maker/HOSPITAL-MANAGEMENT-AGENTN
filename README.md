@@ -204,19 +204,6 @@ Hospital-Information-Agent/
 └── .env
 ```
 
----
-
-# 📸 Screenshots
-
-Add screenshots of your application here.
-
-Suggested screenshots:
-- Home Page
-- Chat Interface
-- AI Response
-- About Page
-
----
 
 # ✅ Advantages
 
