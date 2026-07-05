@@ -148,13 +148,11 @@ This helps the AI:
 
 ---
 
-## 🚀 Installation
+## 🚀 project link
 
-### Clone the repository
 
-```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-```
+
+https://hospital-information-agent-637320943606.asia-southeast1.run.app
 
 ### Navigate to the project
 
