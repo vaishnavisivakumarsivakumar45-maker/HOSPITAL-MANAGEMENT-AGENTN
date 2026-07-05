@@ -77,8 +77,7 @@ The Hospital Information AI Agent enables users to:
 
 ### AI Model
 - Google Gemini API
-- Google AI Studio
-
+ 
 ### Version Control
 - Git
 - GitHub
