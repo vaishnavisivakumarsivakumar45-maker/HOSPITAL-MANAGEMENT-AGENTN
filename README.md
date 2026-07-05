@@ -1,60 +1,68 @@
 # 🏥 Hospital Information AI Agent
 
-An AI-powered Hospital Information Assistant that helps users get instant hospital-related information through a simple chat interface. The application uses Google's Gemini AI to answer user queries about doctors, departments, OP timings, appointments, emergency services, and hospital facilities.
+An AI-powered Hospital Information Assistant that helps users get instant hospital-related information through an interactive chatbot. The application uses Google's Gemini AI to answer hospital-related queries such as doctor availability, departments, OP timings, appointment guidance, emergency services, and hospital facilities.
 
 ---
 
-## 📌 Project Overview
+## 🌐 Live Demo
 
-The Hospital Information AI Agent is designed to improve the patient experience by providing quick and accurate responses to common hospital-related questions. Instead of waiting at the reception or searching through multiple web pages, users can simply ask questions in natural language and receive instant answers.
-
-This project demonstrates how Large Language Models (LLMs) can be integrated into a web application to provide intelligent healthcare information assistance.
+**Project Link:**  
+https://hospital-information-agent-637320943606.asia-southeast1.run.app
 
 ---
 
-## ❗ Problem Statement
+# 📖 Project Overview
 
-Many hospitals still depend on manual enquiry systems where patients must visit the reception or make phone calls to obtain basic information. This often leads to:
+The Hospital Information AI Agent is designed to simplify access to hospital information by providing instant responses through an AI chatbot. Instead of waiting at the reception or searching through multiple web pages, users can ask questions in natural language and receive quick, accurate answers.
 
+This project demonstrates how Large Language Models (LLMs) can be integrated into a modern web application to improve healthcare information services.
+
+---
+
+# ❗ Problem Statement
+
+Many hospitals still rely on manual enquiry systems where patients need to visit the reception or make phone calls to obtain basic information.
+
+This leads to:
 - Long waiting times
-- Repeated enquiries
-- Increased workload for hospital staff
+- Increased workload for reception staff
 - Limited enquiry hours
+- Repeated questions from patients
 - Poor user experience
 
-This project aims to solve these problems by providing a 24×7 AI-powered virtual assistant.
+The goal of this project is to provide an AI-powered assistant that is available 24×7 to answer hospital-related questions instantly.
 
 ---
 
-## 💡 Proposed Solution
+# 💡 Proposed Solution
 
-The Hospital Information AI Agent allows users to:
+The Hospital Information AI Agent enables users to:
 
 - Ask hospital-related questions in natural language
 - Get instant AI-generated responses
-- Access doctor and department information
-- Know OP timings
+- View doctor and department information
+- Check OP timings
 - Learn appointment procedures
-- Find emergency services
-- View hospital facilities
+- Access emergency contact details
+- Explore hospital facilities
 
 ---
 
-## ✨ Features
+# ✨ Features
 
 - 🤖 AI-powered chatbot
 - 🏥 Hospital information assistance
 - 👨‍⚕️ Doctor and department details
 - ⏰ OP timing information
 - 📅 Appointment guidance
-- 🚑 Emergency service information
+- 🚑 Emergency services information
 - 💬 Natural language conversation
-- ⚡ Fast response using Gemini AI
-- 📱 Responsive web interface
+- ⚡ Fast responses using Google Gemini AI
+- 📱 Responsive user interface
 
 ---
 
-## 🛠 Technology Stack
+# 🛠 Technology Stack
 
 ### Frontend
 - React.js
@@ -67,7 +75,7 @@ The Hospital Information AI Agent allows users to:
 - Node.js
 - Express.js
 
-### AI
+### AI Model
 - Google Gemini API
 - Google AI Studio
 
@@ -76,12 +84,11 @@ The Hospital Information AI Agent allows users to:
 - GitHub
 
 ### Deployment
-- Docker (Optional)
-- AWS / Azure / Render / Railway (Future Deployment)
+- Google Cloud Run
 
 ---
 
-## 🏗 System Architecture
+# 🏗 System Architecture
 
 ```
 User
@@ -107,57 +114,59 @@ Frontend
 
 ---
 
-## 🔄 Workflow
+# 🔄 Workflow
 
-1. User opens the Hospital Information website.
-2. User enters a hospital-related question.
-3. React frontend sends the request to the backend.
-4. Backend creates a structured prompt.
-5. Gemini API processes the prompt.
-6. AI generates an appropriate response.
-7. Backend returns the response.
-8. Frontend displays the answer to the user.
+1. User opens the Hospital Information AI Agent.
+2. User enters a hospital-related query.
+3. The React frontend sends the request to the backend.
+4. The backend creates a structured prompt.
+5. The prompt is sent to the Gemini API.
+6. Gemini processes the request and generates an intelligent response.
+7. The backend receives the response.
+8. The response is displayed to the user.
 
 ---
 
-## 🧠 Prompt Engineering
+# 🧠 Prompt Engineering
 
-The application uses prompt engineering to improve response quality.
+The chatbot uses prompt engineering to generate accurate and consistent responses.
 
-Example prompt:
+Example:
 
-```
+```text
 You are a Hospital Information Assistant.
 
 Answer only hospital-related questions.
 
 Provide clear, polite, and accurate responses.
 
-If the question is unrelated to hospitals,
-politely inform the user.
+If the question is unrelated to hospital information,
+politely inform the user that you can only answer hospital-related queries.
 
 User Question:
 What are the OP timings for Cardiology?
 ```
 
 This helps the AI:
-- Stay focused
-- Produce consistent responses
-- Reduce irrelevant answers
-- Improve accuracy
+- Stay focused on hospital information
+- Produce consistent answers
+- Reduce irrelevant responses
+- Improve overall accuracy
 
 ---
 
-## 🚀 project link
+# 🚀 Installation
 
+### Clone the repository
 
-
-https://hospital-information-agent-637320943606.asia-southeast1.run.app
+```bash
+git clone <repository-url>
+```
 
 ### Navigate to the project
 
 ```bash
-cd YOUR_REPOSITORY
+cd Hospital-Information-Agent
 ```
 
 ### Install dependencies
@@ -166,19 +175,13 @@ cd YOUR_REPOSITORY
 npm install
 ```
 
-### Configure Environment Variables
-
-Create a `.env` file.
-
-Example:
+### Create a `.env` file
 
 ```env
 GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 ```
 
----
-
-### Start the development server
+### Run the project
 
 ```bash
 npm run dev
@@ -186,35 +189,28 @@ npm run dev
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```
 Hospital-Information-Agent/
 │
 ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── App.jsx
-│   └── main.jsx
-│
-├── server/
-│
 ├── public/
-│
+├── server/
 ├── package.json
 ├── Dockerfile
+├── server.ts
 ├── README.md
 └── .env
 ```
 
 ---
 
-## 📸 Screenshots
+# 📸 Screenshots
 
-Add screenshots here after running the project.
+Add screenshots of your application here.
 
-Example:
-
+Suggested screenshots:
 - Home Page
 - Chat Interface
 - AI Response
@@ -222,7 +218,28 @@ Example:
 
 ---
 
-## 🔮 Future Enhancements
+# ✅ Advantages
+
+- Instant AI-powered responses
+- Available 24×7
+- Easy-to-use interface
+- Reduces receptionist workload
+- Saves patients' time
+- Improves user experience
+- Fast and intelligent conversation
+
+---
+
+# ⚠ Limitations
+
+- Requires an internet connection
+- Depends on Google Gemini API
+- Cannot diagnose medical conditions
+- Information accuracy depends on available hospital data
+
+---
+
+# 🔮 Future Enhancements
 
 - Voice Assistant
 - Multi-language Support
@@ -230,42 +247,12 @@ Example:
 - Patient Login
 - Doctor Availability Tracking
 - Hospital Database Integration
-- Medical Report Access
-- Emergency Ambulance Booking
 - Chat History
+- Emergency Ambulance Booking
 - Mobile Application
 
 ---
 
-## Advantages
-
-- Instant responses
-- Easy to use
-- Available 24×7
-- Reduces receptionist workload
-- Saves patient time
-- Improves patient experience
-- AI-powered intelligent conversation
-
----
-
-## Limitations
-
-- Requires internet connection
-- Depends on Gemini API availability
-- Cannot diagnose diseases
-- Accuracy depends on available hospital information
-
----
-
-## 👩‍💻 Author
-
-**Vaishnavi Sivakumar**
-
-- GitHub: https://github.com/VAISHNAVISIVAKUMAR050
-
----
-
-## 📄 License
+# 📄 License
 
 This project is developed for educational and learning purposes.
