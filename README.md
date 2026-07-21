@@ -7,7 +7,7 @@ An AI-powered Hospital Information Assistant that helps users get instant hospit
 ## 🌐 Live Demo
 
 **Project Link:**  
-https://hospital-information-agent-637320943606.asia-southeast1.run.app
+https://hospital-management-agentn.vercel.app/
 
 ---
 
